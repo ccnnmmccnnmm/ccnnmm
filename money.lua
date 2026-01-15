@@ -76,7 +76,7 @@ local function main()
         
         -- 换服后自动执行的脚本
         local teleportScript = [[
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/lyy122525/Lyynb/refs/heads/main/Starrain%EF%BC%88lyy%EF%BC%89.lua"))()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ccnnmmccnnmm/ccnnmm/refs/heads/main/money.lua"))()
         ]]
         queue_on_teleport(teleportScript)
         
