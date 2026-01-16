@@ -1,91 +1,120 @@
-local Players = game:GetService("Players")
-local VirtualInputManager = game:GetService("VirtualInputManager")
+local player = game:GetService("Players").LocalPlayer
 local TeleportService = game:GetService("TeleportService")
 local HttpService = game:GetService("HttpService")
-local player = Players.LocalPlayer
-local TARGET_POS = Vector3.new(1111.29, 12.96, -326.66)--现金堆坐标
+local RunService = game:GetService("RunService")
 
--- 换服函数：获取随机可用服务器
-local function getRandomServer()
-    local placeId = game.PlaceId
-    local apiUrl = "https://games.roblox.com/v1/games/" .. placeId .. "/servers/Public?sortOrder=Asc&limit=100"
-    local cursor = nil
+-- 核心逻辑封装，便于换服后重新执行
+local function mainLogic()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local HumanoidRootPart = character:WaitForChild("HumanoidRootPart")
+    local humanoid = character:WaitForChild("Humanoid")
+    local scriptStartTime = os.time()
+    local forbiddenZoneCenter = Vector3.new(352.884155, 13.0287256, -1353.05396)
+    local forbiddenRadius = 80
     
-    repeat
-        local url = apiUrl .. (cursor and "&cursor=" .. cursor or "")
-        local success, response = pcall(function()
-            return game:HttpGet(url)
-        end)
-        
-        if not success then
-            warn("获取服务器列表失败: " .. response)
-            task.wait(2)
-            return nil
-        end
-        
-        local servers = HttpService:JSONDecode(response)
-        local validServers = {}
-        
+    -- 获取可用服务器列表
+    local function getAvailableServers()
+        local servers = HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?limit=100"))
+        local currentJobId = game.JobId
+        local availableServers = {}
         for _, server in ipairs(servers.data) do
-            if server.id ~= game.JobId and server.playing < server.maxPlayers then
-                table.insert(validServers, server)
+            if server.id ~= currentJobId and server.playing < server.maxPlayers and server.playing < 38 then
+                table.insert(availableServers, server.id)
             end
         end
-        
-        if #validServers > 0 then
-            local randomIndex = math.random(1, #validServers)
-            return validServers[randomIndex]
+        return availableServers
+    end
+    
+    local availableServers = getAvailableServers()
+    
+    local targetItems = {
+        "Money Printer", "Golden Rose", "Black Rose", "Spectral Scythe", "Void Gem", "Diamond",
+        "Blue Candy Cane", "Red Candy Cane", "Heart Balloon", "Golden Clover Balloon", "Bat Balloon",
+        "Suitcase Nuke", "Helicopter Key", "Wild Horse Key", "Easter Basket", "Diamond Banana Peel",
+        "Nuclear Launcher", "Nuclear Missile Launcher", "Trident", "Golden Cup", "Pearl Necklace",
+        "NextBot Grenade", "Golden AK47", "Green Lucky Block", "Candy Cane", "Purple Lucky Block",
+        "Treasure Map", "Snowflake Balloon", "Skull Balloon", "Gold AK-47", "Gold Deagle",
+        "Lucky Egg", "Orange Lucky Block", "Rollie"
+    }
+    
+    local function checkTimeout()
+        return (os.time() - scriptStartTime) >= 10
+    end
+    
+    -- 换服函数（包含换服后自动执行逻辑）
+    local function TPServer()
+        -- 重新获取可用服务器（避免过期）
+        local freshServers = getAvailableServers()
+        if #freshServers > 0 then
+            local targetServerId = freshServers[math.random(1, #freshServers)]
+            print("准备换服至服务器: " .. targetServerId)
+            
+            -- 封装换服后需要执行的逻辑
+            local teleportScript = [[
+                local player = game:GetService("Players").LocalPlayer
+                local script = game:GetService("ServerScriptService"):FindFirstChild("AutoScript") or Instance.new("Script")
+                script.Name = "AutoScript"
+                script.Parent = game:GetService("ServerScriptService")
+                script.Source = [[https://raw.githubusercontent.com/ccnnmmccnnmm/ccnnmm/refs/heads/main/money.lua
+                    ]] .. game:GetService("HttpService"):JSONEncode(debug.getinfo(mainLogic, "S").source:sub(2)) .. [[
+                ]]
+                loadstring(script.Source)()
+            ]]
+            
+            -- 确保换服后自动执行
+            queue_on_teleport(teleportScript)
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, targetServerId, player)
         end
-        
-        cursor = servers.nextPageCursor
-        task.wait(1)
-    until not cursor
+    end
     
-    return nil
+    local function AutoPickItem()
+        while task.wait(0.1) do
+            if checkTimeout() then
+                TPServer()
+                return
+            end
+            local foundItem = false
+            -- 检查物品拾取目录是否存在
+            if game:GetService("Workspace"):FindFirstChild("Game") 
+                and game.Workspace.Game:FindFirstChild("Entities") 
+                and game.Workspace.Game.Entities:FindFirstChild("ItemPickup") then
+                
+                for _, itemFolder in pairs(game.Workspace.Game.Entities.ItemPickup:GetChildren()) do
+                    for _, item in pairs(itemFolder:GetChildren()) do
+                        if (item:IsA("MeshPart") or item:IsA("Part")) then
+                            local itemPos = item.Position
+                            local distance = (itemPos - forbiddenZoneCenter).Magnitude
+                            if distance > forbiddenRadius then
+                                for _, child in pairs(item:GetChildren()) do
+                                    if child:IsA("ProximityPrompt") then
+                                        for _, targetName in pairs(targetItems) do
+                                            if child.ObjectText == targetName then
+                                                foundItem = true
+                                                humanoid:Move(Vector3.new(1, 0, 0))
+                                                HumanoidRootPart.CFrame = item.CFrame * CFrame.new(0, 2, 0)
+                                                child.RequiresLineOfSight = false
+                                                child.HoldDuration = 0
+                                                fireproximityprompt(child)
+                                                task.wait(0.01)
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            
+            if not foundItem then
+                TPServer()
+                return
+            end
+        end
+    end
+    
+    AutoPickItem()
 end
 
--- 主流程：单次传送+8秒互动+换服
-local function main()
-    -- 单次传送至现金堆
-    local character = player.Character or player.CharacterAdded:Wait()
-    local humanoidRootPart = character:WaitForChild("HumanoidRootPart", 5)
-    
-    if humanoidRootPart then
-        humanoidRootPart.CFrame = CFrame.new(TARGET_POS)
-        print("已传送至现金堆位置（仅一次）")
-    else
-        warn("未找到HumanoidRootPart，无法传送")
-        return
-    end
-
-    -- 自动互动8秒
-    print("开始自动互动，持续8秒...")
-    local endTime = os.clock() + 8
-    while os.clock() < endTime do
-        VirtualInputManager:SendKeyEvent(true, "E", false, game)
-        task.wait(0.01)
-        VirtualInputManager:SendKeyEvent(false, "E", false, game)
-        task.wait(0.01)
-    end
-    print("自动互动结束")
-
-    -- 获取目标服务器并执行换服
-    local targetServer = getRandomServer()
-    if targetServer then
-        print("准备换服至服务器: " .. targetServer.id)
-        
-        -- 换服后自动执行的脚本
-        local teleportScript = [[
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/ccnnmmccnnmm/ccnnmm/refs/heads/main/money.lua"))()
-        ]]
-        queue_on_teleport(teleportScript)
-        
-        task.wait(1)
-        TeleportService:TeleportToPlaceInstance(game.PlaceId, targetServer.id, player)
-    else
-        warn("未找到可用服务器，换服失败")
-    end
-end
-
--- 启动主流程
-main()
+-- 启动主逻辑
+mainLogic()
