@@ -6,8 +6,8 @@
             "enabled": true,
             "expireTime": "2024-12-31"  // 到期时间（可选）
         },
-        "Player2": { 
-            "userId": 87654321, 
+        "dkbjd466": { 
+            "userId": 10383049854, 
             "enabled": true  // 未设置则永久有效
         }
     }
