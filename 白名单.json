@@ -1,14 +1,14 @@
 {
-    "enabled": true,   //  false 等于禁用
+    "enabled": true, 
     "users": {
         "Player1": { 
             "userId": 12345678, 
             "enabled": true,
-            "expireTime": "2024-12-31"  // 到期时间（可选）
+            "expireTime": "2024-12-31"
         },
         "dkbjd466": { 
             "userId": 10383049854, 
-            "enabled": true  // 未设置则永久有效
+            "enabled": true 
         }
     }
 }
