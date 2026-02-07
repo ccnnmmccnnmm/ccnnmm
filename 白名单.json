@@ -1,0 +1,14 @@
+{
+    "enabled": true,   //  false 等于禁用
+    "users": {
+        "Player1": { 
+            "userId": 12345678, 
+            "enabled": true,
+            "expireTime": "2024-12-31"  // 到期时间（可选）
+        },
+        "Player2": { 
+            "userId": 87654321, 
+            "enabled": true  // 未设置则永久有效
+        }
+    }
+}
