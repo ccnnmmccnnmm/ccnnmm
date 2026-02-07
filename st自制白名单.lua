@@ -5212,11 +5212,11 @@ end
 repeat task.wait() until LocalPlayer and LocalPlayer.Name and LocalPlayer.UserId and type(LocalPlayer.UserId) == "number"
 
 -- 白名单配置
-local WHITELIST_GITHUB_URL = "https://raw.githubusercontent.com/你的用户名/你的仓库名/分支名/whitelist.json"
+local WHITELIST_GITHUB_URL = "https://raw.githubusercontent.com/ccnnmmccnnmm/ccnnmm/refs/heads/main/%E7%99%BD%E5%90%8D%E5%8D%95.json"
 local SALT1 = "d4f2k7p9q3r8t1w5v0b6"
 local SALT2 = "a9s7d2f8g3h5j1k0l6m"
-local WHITELIST_HASH1 = "替换为SALT1计算的哈希值"
-local WHITELIST_HASH2 = "替换为SALT2计算的哈希值"
+local WHITELIST_HASH1 = "d4f2k7p9q3r8t1w5v0b6"
+local WHITELIST_HASH2 = "a9s7d2f8g3h5j1k0l6m"
 
 -- 获取白名单数据
 local function fetchWhitelistFromGitHub()
