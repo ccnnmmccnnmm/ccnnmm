@@ -24,13 +24,11 @@ end
 local availableServers = getAvailableServers()
 
 local targetItems = {
-    "Money Printer", "Golden Rose", "Black Rose", "Spectral Scythe", "Void Gem", "Diamond",
-    "Blue Candy Cane", "Red Candy Cane", "Heart Balloon", "Golden Clover Balloon", "Bat Balloon",
+    "Money Printer", "Golden Rose", "Black Rose", "Spectral Scythe","Blue Candy Cane", "Red Candy Cane", "Heart Balloon", "Golden Clover Balloon", "Bat Balloon",
     "Suitcase Nuke", "Helicopter Key", "Wild Horse Key", "Easter Basket", "Diamond Banana Peel",
     "Nuclear Launcher", "Nuclear Missile Launcher", "Trident", "Golden Cup", "Pearl Necklace",
-    "NextBot Grenade", "Golden AK47", "Green Lucky Block", "Candy Cane", "Purple Lucky Block",
-    "Treasure Map", "Snowflake Balloon", "Skull Balloon", "Gold AK-47", "Gold Deagle", "Lucky Egg",
-    "Orange Lucky Block", "Rollie"
+    "NextBot Grenade),
+    "Treasure Map", "Snowflake Balloon", "Skull Balloon"
 }
 
 local function checkTimeout()
