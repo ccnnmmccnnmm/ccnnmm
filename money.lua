@@ -29,8 +29,7 @@ local targetItems = {
     "Suitcase Nuke", "Helicopter Key", "Wild Horse Key", "Easter Basket", "Diamond Banana Peel",
     "Nuclear Launcher", "Nuclear Missile Launcher", "Trident", "Golden Cup", "Pearl Necklace",
     "NextBot Grenade", "Golden AK47", "Green Lucky Block", "Candy Cane", "Purple Lucky Block",
-    "Treasure Map", "Snowflake Balloon", "Skull Balloon", "Gold AK-47", "Gold Deagle", "Lucky Egg",
-    "Orange Lucky Block", "Rollie"
+    "Treasure Map", "Snowflake Balloon"
 }
 
 local function checkTimeout()
