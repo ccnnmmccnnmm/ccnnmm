@@ -27,7 +27,7 @@ local targetItems = {
     "Money Printer", "Golden Rose", "Black Rose", "Spectral Scythe","Blue Candy Cane", "Red Candy Cane", "Heart Balloon", "Golden Clover Balloon", "Bat Balloon",
     "Suitcase Nuke", "Helicopter Key", "Wild Horse Key", "Easter Basket", "Diamond Banana Peel",
     "Nuclear Launcher", "Nuclear Missile Launcher", "Trident", "Golden Cup", "Pearl Necklace",
-    "NextBot Grenade),
+    "NextBot Grenade”,
     "Treasure Map", "Snowflake Balloon", "Skull Balloon"
 }
 
